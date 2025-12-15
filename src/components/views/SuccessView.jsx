@@ -16,9 +16,9 @@ const SuccessView = ({ newLink, setNewLink, showToast }) => {
               <div className="bg-black border border-white/10 p-4 rounded-2xl flex items-center gap-3 hover:border-indigo-500/50 transition-colors">
                   <Globe className="text-zinc-600 shrink-0"/>
                   <a href={`/${newLink.short_code}`} target="_blank" className="flex-1 font-mono text-lg text-indigo-400 underline truncate">
-                      linkify.app/{newLink.short_code}
+                      linkifyy.netlify.app/{newLink.short_code}
                   </a>
-                  <button onClick={() => {navigator.clipboard.writeText(`linkify.app/${newLink.short_code}`); showToast("Copied!")}} 
+                  <button onClick={() => {navigator.clipboard.writeText(`linkifyy.netlify.app/${newLink.short_code}`); showToast("Copied!")}} 
                       className="p-2 hover:bg-white/10 rounded-lg transition-colors">
                       <Copy className="text-zinc-400 hover:text-white" size={20}/>
                   </button>
@@ -34,7 +34,7 @@ const SuccessView = ({ newLink, setNewLink, showToast }) => {
 
               <div className="flex justify-center">
                   <div className="bg-white p-6 rounded-3xl shadow-[0_0_30px_rgba(255,255,255,0.05)] w-full max-w-[250px] flex justify-center items-center">
-                      <QRCodeSVG value={`https://linkify.app/${newLink.short_code}`} size={180} />
+                      <QRCodeSVG value={`https://linkifyy.netlify.app/${newLink.short_code}`} size={180} />
                   </div>
               </div>
           </div>
