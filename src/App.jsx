@@ -22,8 +22,8 @@ function App() {
   const [manageCode, setManageCode] = useState('');
   const [managePin, setManagePin] = useState('');
   const [analytics, setAnalytics] = useState({ mobile: 0, tablet: 0, desktop: 0 });
-  const [editUrl, setEditUrl] = useState('');
-  const [editAlias, setEditAlias] = useState('');
+  const [editUrl, setEditUrl] = useState(dashboardData?.original_url || '');
+  const [editAlias, setEditAlias] = useState(dashboardData?.short_code || '');
   const [newLink, setNewLink] = useState(null);
   const [toast, setToast] = useState(null);
 
@@ -38,11 +38,11 @@ function App() {
   useEffect(() => {
     const path = window.location.pathname.substring(1);
     if (path && path !== 'create' && path !== 'manage') {
-        setIsRedirecting(true);
-        handleRedirect(path).then((res) => {
-            if (res.success) window.location.href = res.url;
-            else setIsRedirecting(false);
-        });
+      setIsRedirecting(true);
+      handleRedirect(path).then((res) => {
+        if (res.success) window.location.href = res.url;
+        else setIsRedirecting(false);
+      });
     }
   }, []);
 
@@ -54,14 +54,14 @@ function App() {
     const { data: clicks } = await supabase.from('clicks').select('device').eq('url_id', dashboardData.id);
     const stats = { mobile: 0, desktop: 0, tablet: 0 };
     clicks?.forEach(c => {
-        if(c.device === 'Mobile') stats.mobile++;
-        else if(c.device === 'Tablet') stats.tablet++;
-        else stats.desktop++;
+      if (c.device === 'Mobile') stats.mobile++;
+      else if (c.device === 'Tablet') stats.tablet++;
+      else stats.desktop++;
     });
     setAnalytics(stats);
   };
 
-  useEffect(() => { if(dashboardData) refreshAnalytics(); }, [dashboardData?.id]);
+  useEffect(() => { if (dashboardData) refreshAnalytics(); }, [dashboardData?.id]);
 
   const handleCreate = async (e) => {
     e.preventDefault();
@@ -89,25 +89,25 @@ function App() {
     if (editAlias !== dashboardData.short_code && !confirm("Changing alias breaks old links. Continue?")) return;
     const res = await updateLink(dashboardData.id, editUrl, editAlias);
     if (res.success) {
-        setDashboardData(prev => ({ ...prev, original_url: editUrl, short_code: editAlias }));
-        showToast("Updated successfully");
+      setDashboardData(prev => ({ ...prev, original_url: editUrl, short_code: editAlias }));
+      showToast("Updated successfully");
     } else showToast(res.message, 'error');
   };
 
   const handleDelete = async () => {
-      if(!confirm("Are you sure? This action cannot be undone.")) return;
-      const res = await deleteLink(dashboardData.id);
-      if(res.success) {
-          setDashboardData(null);
-          showToast("Link deleted successfully");
-      } else {
-          showToast(res.message, 'error');
-      }
+    if (!confirm("Are you sure? This action cannot be undone.")) return;
+    const res = await deleteLink(dashboardData.id);
+    if (res.success) {
+      setDashboardData(null);
+      showToast("Link deleted successfully");
+    } else {
+      showToast(res.message, 'error');
+    }
   };
 
   const handleLogout = () => {
-      setDashboardData(null);
-      sessionStorage.removeItem('linkify_dashboard');
+    setDashboardData(null);
+    sessionStorage.removeItem('linkify_dashboard');
   };
 
   if (isRedirecting) return <div className="min-h-screen bg-black flex items-center justify-center text-white"><Loader2 className="animate-spin text-indigo-500" size={48} /></div>;
@@ -123,10 +123,10 @@ function App() {
         {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
 
         {activeTab === 'create' && !newLink && (
-          <CreateLinkView 
-            urlInput={urlInput} setUrlInput={setUrlInput} 
-            customAlias={customAlias} setCustomAlias={setCustomAlias} 
-            handleCreate={handleCreate} loading={loading} 
+          <CreateLinkView
+            urlInput={urlInput} setUrlInput={setUrlInput}
+            customAlias={customAlias} setCustomAlias={setCustomAlias}
+            handleCreate={handleCreate} loading={loading}
           />
         )}
 
@@ -135,16 +135,16 @@ function App() {
         )}
 
         {activeTab === 'manage' && !dashboardData && (
-          <ManageLoginView 
-            handleLogin={handleLogin} 
-            manageCode={manageCode} setManageCode={setManageCode} 
-            managePin={managePin} setManagePin={setManagePin} 
-            loading={loading} history={history} 
+          <ManageLoginView
+            handleLogin={handleLogin}
+            manageCode={manageCode} setManageCode={setManageCode}
+            managePin={managePin} setManagePin={setManagePin}
+            loading={loading} history={history}
           />
         )}
 
         {activeTab === 'manage' && dashboardData && (
-          <DashboardView 
+          <DashboardView
             dashboardData={dashboardData} setDashboardData={setDashboardData}
             analytics={analytics} refreshAnalytics={refreshAnalytics}
             handleLogout={handleLogout}
@@ -156,13 +156,13 @@ function App() {
         )}
 
         <div className="w-full max-w-2xl mt-20 mb-10 border-t border-white/10 pt-10">
-            <h3 className="text-2xl font-bold text-center mb-8">Frequently Asked Questions</h3>
-            <div className="space-y-2">
-                <FaqItem question="Is Linkifyy free to use?" answer="Yes, Linkifyy is completely free for personal and commercial use. You can create unlimited links." />
-                <FaqItem question="Do links expire?" answer="No, your links will remain active indefinitely unless you choose to delete them or update them." />
-                <FaqItem question="Can I track my link's performance?" answer="Absolutely. Our dashboard provides real-time analytics including total clicks and device breakdowns (Mobile vs Desktop)." />
-                <FaqItem question="What happens if I lose my PIN?" answer="For security reasons, we cannot recover PINs. We recommend saving your PIN or checking the 'Recent Links' section on the device you used to create the link." />
-            </div>
+          <h3 className="text-2xl font-bold text-center mb-8">Frequently Asked Questions</h3>
+          <div className="space-y-2">
+            <FaqItem question="Is Linkifyy free to use?" answer="Yes, Linkifyy is completely free for personal and commercial use. You can create unlimited links." />
+            <FaqItem question="Do links expire?" answer="No, your links will remain active indefinitely unless you choose to delete them or update them." />
+            <FaqItem question="Can I track my link's performance?" answer="Absolutely. Our dashboard provides real-time analytics including total clicks and device breakdowns (Mobile vs Desktop)." />
+            <FaqItem question="What happens if I lose my PIN?" answer="For security reasons, we cannot recover PINs. We recommend saving your PIN or checking the 'Recent Links' section on the device you used to create the link." />
+          </div>
         </div>
       </main>
 
